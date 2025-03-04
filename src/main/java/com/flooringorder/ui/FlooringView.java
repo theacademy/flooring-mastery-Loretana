@@ -1,14 +1,21 @@
 package com.flooringorder.ui;
 
-import com.flooringorder.model.Order;
 import com.flooringorder.model.Product;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@Component
 public class FlooringView {
 
     private UserIO io;
+
+    @Autowired
+    public FlooringView(UserIO io) {
+        this.io = io;
+    }
 
     public int printMenuAndGetSelection() {
         displayStars();
