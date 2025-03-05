@@ -1,7 +1,6 @@
 package com.flooringorder.dao;
 
 import com.flooringorder.model.Order;
-import com.flooringorder.model.Product;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
@@ -113,7 +112,7 @@ public class OrderDaoFileImpl implements OrderDao {
         Order currentOrder;
         List<Order> orders = new ArrayList<>();
 
-        // skip header line to avoid conflict in unmarshallProduct()
+        // skip header line to avoid conflict in unmarshallOrder()
         if(scanner.hasNextLine()) {
             scanner.nextLine();
         }
@@ -149,7 +148,7 @@ public class OrderDaoFileImpl implements OrderDao {
     /*
      * Convert an Order object into a String
      * */
-    private String marshallProduct(Order order){
+    private String marshallOrder(Order order){
         String orderAsText;
 
         orderAsText = order.getOrderId() + DELIMITER;
