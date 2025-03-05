@@ -55,7 +55,6 @@ public class FloorController {
     }
 
     private void displayOrder() throws OrderNotFoundException, DataPersistanceException {
-        System.out.println("displayOrder");
         String dateAsText = view.getUserDateChoice();
         List<Order> orderFound = service.getOrdersByDate(dateAsText);
         view.displayAllOrders(orderFound);
