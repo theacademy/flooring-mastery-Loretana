@@ -1,5 +1,6 @@
 package com.flooringorder;
 
+import com.flooringorder.controller.FloorController;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public class App {
@@ -9,6 +10,7 @@ public class App {
         appContext.scan("com.flooringorder");
         appContext.refresh();
 
-
+        FloorController controller = appContext.getBean("floorController", FloorController.class);
+        controller.run();
     }
 }

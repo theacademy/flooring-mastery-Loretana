@@ -28,7 +28,7 @@ public class FlooringView {
         io.print("* 6. Quit");
         displayStars();
 
-        return io.readInt("Please select from the above choices.", 1, 5);
+        return io.readInt("Please select from the above choices.", 1, 6);
     }
 
     public void displayStars() {
