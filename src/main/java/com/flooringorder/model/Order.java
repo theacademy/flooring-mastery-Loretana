@@ -122,4 +122,22 @@ public class Order {
     public LocalDate getDate() {
         return date;
     }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "orderId=" + orderId +
+                ", state='" + state + '\'' +
+                ", productType='" + productType + '\'' +
+                ", taxRate=" + taxRate +
+                ", area=" + area +
+                ", costPerSquareFoot=" + costPerSquareFoot +
+                ", laborCostPerSquareFoot=" + laborCostPerSquareFoot +
+                ", customerName='" + customerName + '\'' +
+                ", materialCost=" + materialCost +
+                ", laborCost=" + laborCost +
+                ", tax=" + tax +
+                ", total=" + total +
+                '}';
+    }
 }

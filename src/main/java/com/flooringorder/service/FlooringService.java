@@ -1,8 +1,10 @@
 package com.flooringorder.service;
 
+import com.flooringorder.dao.DataPersistanceException;
 import com.flooringorder.model.Order;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public interface FlooringService {
 
@@ -15,5 +17,7 @@ public interface FlooringService {
     Order removeOrder(int orderId, LocalDate date);
 
     Order getOrder(int orderId, LocalDate date);
+
+    List<Order> getOrdersByDate(String dateAsText) throws DataPersistanceException, OrderNotFoundException;
 
 }

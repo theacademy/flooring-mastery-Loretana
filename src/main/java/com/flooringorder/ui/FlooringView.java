@@ -1,5 +1,6 @@
 package com.flooringorder.ui;
 
+import com.flooringorder.model.Order;
 import com.flooringorder.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -63,6 +64,12 @@ public class FlooringView {
         }
     }
 
+    public void displayAllOrders(List<Order> orders) {
+        for(Order currentOrder : orders) {
+            io.print(currentOrder.toString());
+        }
+    }
+
     public void displayBanner() {
         io.print("==== Display Order ====");
     }
@@ -83,8 +90,8 @@ public class FlooringView {
         io.print("==== Export Orders ====");
     }
 
-
-
-
-
+    public void displayErrorMessage(String errorMsg) {
+        io.print("=== ERROR ===");
+        io.print(errorMsg);
+    }
 }

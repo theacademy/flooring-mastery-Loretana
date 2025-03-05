@@ -142,6 +142,9 @@ public class OrderDaoFileImpl implements OrderDao {
     }
 
     private void writeOrder(LocalDate date) throws DataPersistanceException, UnsupportedEncodingException {
+        // if file not created =>
+        // String filename = generateOrderFileName(date)
+        // create new file...
         throw new UnsupportedEncodingException();
     }
 

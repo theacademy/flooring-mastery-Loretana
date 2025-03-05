@@ -1,9 +1,14 @@
 package com.flooringorder.controller;
 
+import com.flooringorder.dao.DataPersistanceException;
+import com.flooringorder.model.Order;
 import com.flooringorder.service.FlooringService;
+import com.flooringorder.service.OrderNotFoundException;
 import com.flooringorder.ui.FlooringView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class FloorController {
@@ -20,8 +25,8 @@ public class FloorController {
     public void run() {
         boolean keepGoing = true;
         int menuSelection = 0;
-        try {
-            while(keepGoing) {
+        while(keepGoing) {
+            try {
                 menuSelection = view.printMenuAndGetSelection();
                 switch (menuSelection) {
                     case 1:
@@ -43,14 +48,17 @@ public class FloorController {
                         keepGoing = false;
                         break;
                 }
+            } catch (OrderNotFoundException | DataPersistanceException e) {
+                view.displayErrorMessage(e.getMessage());
             }
-        } catch (UnsupportedOperationException e) {
-
         }
     }
 
-    private void displayOrder() {
+    private void displayOrder() throws OrderNotFoundException, DataPersistanceException {
         System.out.println("displayOrder");
+        String dateAsText = view.getUserDateChoice();
+        List<Order> orderFound = service.getOrdersByDate(dateAsText);
+        view.displayAllOrders(orderFound);
     }
 
     private void addOrder() {
