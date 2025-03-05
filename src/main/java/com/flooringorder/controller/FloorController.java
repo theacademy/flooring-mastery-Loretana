@@ -5,9 +5,11 @@ import com.flooringorder.model.Order;
 import com.flooringorder.service.FlooringService;
 import com.flooringorder.service.OrderNotFoundException;
 import com.flooringorder.ui.FlooringView;
+import com.flooringorder.ui.InvalidUserInputException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Component
@@ -48,20 +50,21 @@ public class FloorController {
                         keepGoing = false;
                         break;
                 }
-            } catch (OrderNotFoundException | DataPersistanceException e) {
+            } catch (OrderNotFoundException | DataPersistanceException | InvalidUserInputException e) {
                 view.displayErrorMessage(e.getMessage());
             }
         }
     }
 
-    private void displayOrder() throws OrderNotFoundException, DataPersistanceException {
-        String dateAsText = view.getUserDateChoice();
-        List<Order> orderFound = service.getOrdersByDate(dateAsText);
+    private void displayOrder() throws OrderNotFoundException, DataPersistanceException, InvalidUserInputException {
+        LocalDate date = view.getUserDateChoice();
+        List<Order> orderFound = service.getOrdersByDate(date);
         view.displayAllOrders(orderFound);
     }
 
-    private void addOrder() {
+    private void addOrder() throws InvalidUserInputException {
         System.out.println("addOrder");
+        LocalDate dateAsText = view.getUserDateChoice();
 
     }
 

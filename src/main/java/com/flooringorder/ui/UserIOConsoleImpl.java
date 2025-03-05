@@ -2,6 +2,9 @@ package com.flooringorder.ui;
 
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 @Component
@@ -9,6 +12,8 @@ public class UserIOConsoleImpl implements UserIO {
 
 
     public Scanner sc = new Scanner(System.in);
+    private final static DateTimeFormatter FORMATTER_ISO = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
 
     @Override
     public void print(String message) {
@@ -25,6 +30,17 @@ public class UserIOConsoleImpl implements UserIO {
     public int readInt(String prompt) {
         print(prompt);
         return sc.nextInt();
+    }
+
+    @Override
+    public LocalDate readDate(String prompt) throws InvalidUserInputException {
+        print(prompt);
+        String dateAsText = sc.nextLine();
+        try {
+            return LocalDate.parse(dateAsText, FORMATTER_ISO);
+        } catch (DateTimeParseException e) {
+            throw new InvalidUserInputException("ERROR: Invalid date format, must follow ISO-8601 format: YYYY-MM-DD", e);
+        }
     }
 
     @Override

@@ -9,7 +9,7 @@ import java.util.List;
 public interface OrderDao {
 
 
-    Order addOrder(Order newOrder, LocalDate date);
+    Order addOrder(Order newOrder, LocalDate date) throws DataPersistanceException;
 
     List<Order> getAllOrderByDate(LocalDate date) throws DataPersistanceException;
 

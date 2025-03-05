@@ -36,8 +36,8 @@ public class FlooringView {
         io.print("* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *");
     }
 
-    public String getUserDateChoice() {
-        return io.readString("Please enter a date using format YYYY-MM-DD: ");
+    public LocalDate getUserDateChoice() throws InvalidUserInputException {
+        return io.readDate("Please enter a date using format YYYY-MM-DD: ");
     }
 
     public String getUserCustomerNameChoice() {

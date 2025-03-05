@@ -18,6 +18,6 @@ public interface FlooringService {
 
     Order getOrder(int orderId, LocalDate date);
 
-    List<Order> getOrdersByDate(String dateAsText) throws DataPersistanceException, OrderNotFoundException;
+    List<Order> getOrdersByDate(LocalDate date) throws DataPersistanceException, OrderNotFoundException;
 
 }

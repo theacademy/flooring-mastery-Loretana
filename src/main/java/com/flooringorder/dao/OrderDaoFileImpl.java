@@ -17,8 +17,9 @@ public class OrderDaoFileImpl implements OrderDao {
     private final String EXPORT_DIRECTORY_PATH;
     private static final String ORDER_FILE_NAME = "Orders_";
     private static final String DELIMITER = ",";
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMddyyyy");
-    private static final DateTimeFormatter formatterISO = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("MMddyyyy");
+    private static final DateTimeFormatter FORMATTER_ISO = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final String ORDER_FILE_HEADER = "OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total";
 
     private HashMap<LocalDate, HashMap<Integer,Order>> ordersMap = new HashMap<>();
 
@@ -33,8 +34,15 @@ public class OrderDaoFileImpl implements OrderDao {
     }
 
     @Override
-    public Order addOrder(Order newOrder, LocalDate date) {
-        return null;
+    public Order addOrder(Order newOrder, LocalDate date) throws DataPersistanceException {
+        loadAllOrders();
+
+        // if we have no key that match the date, assign an empty new HashMap as a value
+        ordersMap.putIfAbsent(date, new HashMap<>());
+
+        Order addedOrder = ordersMap.get(date).put(newOrder.getOrderId(), newOrder);
+        writeOrder(date);
+        return addedOrder;
     }
 
     /*
@@ -91,9 +99,9 @@ public class OrderDaoFileImpl implements OrderDao {
         List<String> ordersFileName = this.getAllOrdersFileName();
         for(String filename: ordersFileName) {
             // retrieve date from the file name in format MMddyyyy
-            LocalDate currentDate = LocalDate.parse(filename.substring(7, 15), formatter);
+            LocalDate currentDate = LocalDate.parse(filename.substring(7, 15), FORMATTER);
             // load order data into memory with the date in ISO format
-            loadOrder(filename, LocalDate.parse(currentDate.format(formatterISO)) );
+            loadOrder(filename, LocalDate.parse(currentDate.format(FORMATTER_ISO)) );
         }
     }
 
@@ -133,19 +141,33 @@ public class OrderDaoFileImpl implements OrderDao {
     * Generate a file name based on the given date : Order_MMDDYYYY.txt
     * */
     private String generateOrderFileName(LocalDate date) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMddyyyy");
         StringBuilder filename = new StringBuilder();
         filename.append(ORDER_FILE_NAME);
-        filename.append(date.format(formatter));
+        filename.append(date.format(FORMATTER));
         filename.append(".txt");
         return filename.toString();
     }
 
-    private void writeOrder(LocalDate date) throws DataPersistanceException, UnsupportedEncodingException {
-        // if file not created =>
-        // String filename = generateOrderFileName(date)
-        // create new file...
-        throw new UnsupportedEncodingException();
+    private void writeOrder(LocalDate date) throws DataPersistanceException {
+        String fileName = generateOrderFileName(date);
+        PrintWriter out;
+        try {
+            out = new PrintWriter(new FileWriter(ORDER_DIRECTORY_PATH + fileName));
+        } catch (IOException e) {
+            throw new DataPersistanceException("Could not save order data.", e);
+        }
+
+        String orderAsText;
+        List<Order> orderList = this.getAllOrderByDate(date);
+        // insert order header as the first line of the file
+        out.println(ORDER_FILE_HEADER);
+
+        for(Order currentOrder : orderList) {
+            orderAsText = marshallOrder(currentOrder);
+            out.println(orderAsText);
+            out.flush();
+        }
+        out.close();
     }
 
     /*

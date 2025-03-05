@@ -1,5 +1,7 @@
 package com.flooringorder.ui;
 
+import java.time.LocalDate;
+
 public interface UserIO {
 
     void print(String msg);
@@ -9,5 +11,7 @@ public interface UserIO {
     int readInt(String prompt, int min, int max);
 
     String readString(String prompt);
+
+    LocalDate readDate(String prompt) throws InvalidUserInputException;
 
 }
