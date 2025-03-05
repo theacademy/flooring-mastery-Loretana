@@ -49,31 +49,31 @@ public class FloorController {
         }
     }
 
-    public void displayOrder() {
+    private void displayOrder() {
         System.out.println("displayOrder");
     }
 
-    public void addOrder() {
+    private void addOrder() {
         System.out.println("addOrder");
 
     }
 
-    public void editOrder() {
+    private void editOrder() {
         System.out.println("editOrder");
 
     }
 
-    public void removeOrder() {
+    private void removeOrder() {
         System.out.println("removeOrder");
 
     }
 
-    public void exportAllData() {
+    private void exportAllData() {
         System.out.println("exportAllData");
 
     }
 
-    public void quit() {
+    private void quit() {
         System.out.println("quit");
 
     }

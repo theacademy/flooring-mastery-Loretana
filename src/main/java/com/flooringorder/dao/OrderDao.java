@@ -11,14 +11,14 @@ public interface OrderDao {
 
     Order addOrder(Order newOrder, LocalDate date);
 
-    List<Order> getAllOrderByDate(LocalDate date);
+    List<Order> getAllOrderByDate(LocalDate date) throws DataPersistanceException;
 
     Order removeOrder(int orderId, LocalDate date);
 
     Order updateOrder(int orderId, LocalDate date);
 
-    Order getOrderByIdAndDate(int orderId, LocalDate date);
+    Order getOrderByIdAndDate(int orderId, LocalDate date) throws DataPersistanceException;
 
-    void exportAll();
+    void exportAll() throws DataPersistanceException;
 
 }

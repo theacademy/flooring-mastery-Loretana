@@ -28,7 +28,7 @@ public class TaxDaoFileImpl implements TaxDao {
     }
 
     @Override
-    public Tax getTaxByName(String taxName) throws DataPersistanceException {
+    public Tax getTaxByAbbrevName(String taxName) throws DataPersistanceException {
         loadTax();
         return taxMap.get(taxName);
     }
