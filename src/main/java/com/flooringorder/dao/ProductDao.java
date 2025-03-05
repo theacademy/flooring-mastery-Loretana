@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface ProductDao {
 
-    List<Product> getAllProduct();
+    List<Product> getAllProduct() throws DataPersistanceException;
 
-    Product getProductByType(String productType);
+    Product getProductByType(String productType) throws DataPersistanceException;
 
 
 }

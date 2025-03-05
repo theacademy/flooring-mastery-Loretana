@@ -17,7 +17,7 @@ public class TaxDaoFileImpl implements TaxDao {
     private HashMap<String, Tax> taxMap = new HashMap<>();
     private final String TAX_FILE_PATH;
     private static final String DELIMITER = ",";
-    private static final String TAX_HEADER = "State,StateName,TaxRate";
+    private static final String TAX_FILE_HEADER = "State,StateName,TaxRate";
 
     public TaxDaoFileImpl() {
         TAX_FILE_PATH = "src/main/java/com/flooringorder/SampleFileData/Data/Taxes.txt";
@@ -72,7 +72,7 @@ public class TaxDaoFileImpl implements TaxDao {
         String taxAsText;
         List<Tax> taxList = this.getAllTax();
         // insert tax header as the first line of the file
-        out.println(TAX_HEADER);
+        out.println(TAX_FILE_HEADER);
 
         for(Tax currentTax : taxList) {
             taxAsText = marshallTax(currentTax);
