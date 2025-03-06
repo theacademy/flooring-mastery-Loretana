@@ -14,7 +14,7 @@ import java.util.*;
 public class OrderDaoFileImpl implements OrderDao {
 
     private final String ORDER_DIRECTORY_PATH;
-    private final String EXPORT_DIRECTORY_PATH;
+    private final String EXPORT_DIRECTORY_FILE;
     private static final String ORDER_FILE_NAME = "Orders_";
     private static final String DELIMITER = ",";
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("MMddyyyy");
@@ -25,12 +25,12 @@ public class OrderDaoFileImpl implements OrderDao {
 
     public OrderDaoFileImpl() {
         ORDER_DIRECTORY_PATH = "src/main/java/com/flooringorder/SampleFileData/Orders/";
-        EXPORT_DIRECTORY_PATH = "src/main/java/com/flooringorder/SampleFileData/Export/";
+        EXPORT_DIRECTORY_FILE = "src/main/java/com/flooringorder/SampleFileData/Backup/DataExport.txt";
     }
 
     public OrderDaoFileImpl(String ORDER_FILE_PATH, String EXPORT_DIRECTORY_PATH) {
         this.ORDER_DIRECTORY_PATH = ORDER_FILE_PATH;
-        this.EXPORT_DIRECTORY_PATH = EXPORT_DIRECTORY_PATH;
+        this.EXPORT_DIRECTORY_FILE = EXPORT_DIRECTORY_PATH;
     }
 
     @Override
@@ -88,7 +88,8 @@ public class OrderDaoFileImpl implements OrderDao {
 
     @Override
     public void exportAll() throws DataPersistanceException {
-        this.loadAllOrders();
+        loadAllOrders();
+        writeOrdersBackup();
     }
 
     /*
@@ -119,6 +120,9 @@ public class OrderDaoFileImpl implements OrderDao {
         return listOrderFilesName;
     }
 
+    /*
+    * Populate ordersMap from all existing Order_*.txt file
+    * */
     private void loadAllOrders() throws DataPersistanceException {
         List<String> ordersFileName = this.getAllOrdersFileName();
         for(String filename: ordersFileName) {
@@ -172,6 +176,9 @@ public class OrderDaoFileImpl implements OrderDao {
         return filename.toString();
     }
 
+    /*
+    * Write orders in a specific Order_<date>.txt file
+    * */
     private void writeOrder(LocalDate date) throws DataPersistanceException {
         String fileName = generateOrderFileName(date);
         PrintWriter out;
@@ -264,5 +271,44 @@ public class OrderDaoFileImpl implements OrderDao {
         return orderFromFile;
     }
 
+    /*
+    * Write all orders into Backup/DataExport.txt
+    * */
+    private void writeOrdersBackup() throws DataPersistanceException {
+
+        PrintWriter out;
+        try {
+            out = new PrintWriter(new FileWriter(EXPORT_DIRECTORY_FILE));
+        } catch (IOException e) {
+            throw new DataPersistanceException("Could not save order data.", e);
+        }
+
+        this.loadAllOrders();
+        String orderAsText;
+        List<Order> ordersList = getAllOrders();
+
+        // insert order header as the first line of the file
+        out.println(ORDER_FILE_HEADER);
+
+        for(Order currentOrder : ordersList) {
+            orderAsText = marshallOrder(currentOrder);
+            out.println(orderAsText);
+            out.flush();
+        }
+        out.close();
+    }
+
+    /*
+    * Retrieve a list of all orders from all existing date
+    * */
+    private List<Order> getAllOrders() {
+        Set<LocalDate> keysDate = ordersMap.keySet();
+        List<Order> ordersList = new ArrayList<>();
+        for(LocalDate currentKeyDate: keysDate) {
+            List<Order> currentOrdersFromDate = new ArrayList<>(ordersMap.get(currentKeyDate).values());
+            ordersList.addAll(currentOrdersFromDate);
+        }
+        return ordersList;
+    }
 
 }

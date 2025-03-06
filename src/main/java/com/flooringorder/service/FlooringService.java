@@ -28,5 +28,7 @@ public interface FlooringService {
 
     BigDecimal calculateOrderCost(Order order);
 
+    void exportAll() throws DataPersistanceException;
+
 
 }

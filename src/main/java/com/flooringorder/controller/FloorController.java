@@ -159,9 +159,9 @@ public class FloorController {
 
     }
 
-    private void exportAllData() {
+    private void exportAllData() throws DataPersistanceException {
         view.displayExportOrdersBanner();
-
+        service.exportAll();
     }
 
     private void quit() {
