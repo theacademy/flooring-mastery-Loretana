@@ -61,9 +61,15 @@ public class OrderDaoFileImpl implements OrderDao {
         return null;
     }
 
+    /*
+    * Update an order based on the date and order id
+    * */
     @Override
-    public Order updateOrder(int orderId, LocalDate date) {
-        return null;
+    public Order updateOrder(Order orderEdited, LocalDate date) throws DataPersistanceException {
+        loadAllOrders();
+        Order lastOrderVersion = ordersMap.get(date).put(orderEdited.getOrderId(), orderEdited);
+        writeOrder(date);
+        return lastOrderVersion;
     }
 
     /*

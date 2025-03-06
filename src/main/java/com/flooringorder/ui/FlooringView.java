@@ -54,7 +54,7 @@ public class FlooringView {
 
     public int getUserProductTypeByNumberChoice(List<Product> products) {
         displayAllProductType(products);
-        return io.readInt("Please enter the number related to a product: ");
+        return io.readInt("Please enter the number related to a product: ", 1, products.size());
     }
 
     public void displayAllProductType(List<Product> products) {
@@ -101,7 +101,7 @@ public class FlooringView {
         io.print("Current Order: " + newOrder.toString());
         boolean isValid = false;
         while(!isValid) {
-            userConfirmation = io.readString("Would you like to confirm and place your order? (Y/N)");
+            userConfirmation = io.readString("Would you like to confirm and save the order? (Y/N)");
             if(userConfirmation.equalsIgnoreCase("n") || userConfirmation.equalsIgnoreCase("y")) {
                 isValid = true;
             }
@@ -109,5 +109,44 @@ public class FlooringView {
 
         return (userConfirmation.equalsIgnoreCase("Y"));
 
+    }
+
+    public int getUserOrderIdChoice() {
+        return io.readInt("Please enter a number order number: ");
+    }
+
+    public String getUserCustomerNameChoiceEdit(Order order) {
+        io.print("Current customer name: " + order.getCustomerName());
+        return io.readString("Enter a name to update or press Enter to keep the current value");
+    }
+
+    public String getUserStateNameChoiceEdit(Order order) {
+        io.print("Current state: " + order.getState());
+        return io.readString("Enter a state to update or press Enter to keep the current value");
+    }
+
+    public String getUserProductTypeByNumberChoiceEdit(Order order, List<Product> productList) {
+        displayAllProductType(productList);
+        String optionSelected = "";
+        String numberOnlyRegex = "^[0-9]+$";
+        boolean isValid = false;
+        io.print("Current product: " + order.getProductType());
+        while(!isValid) {
+            optionSelected = io.readString("Enter the product number to update or press Enter to keep the current value.");
+            if(optionSelected.matches(numberOnlyRegex)) {
+                int productSelected = Integer.parseInt(optionSelected);
+                if(productSelected >= 1 && productSelected <= productList.size()) {
+                    isValid = true;
+                }
+            } else if(optionSelected.isBlank()) {
+                isValid = true;
+            }
+        }
+        return optionSelected;
+    }
+
+    public String getUserAreaChoiceEdit(Order order) {
+        io.print("Current Area size: " + order.getArea().toString());
+        return io.readString("Enter a area size to update or press Enter to keep the current value");
     }
 }

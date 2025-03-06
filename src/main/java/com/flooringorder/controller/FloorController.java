@@ -99,8 +99,51 @@ public class FloorController {
 
     }
 
-    private void editOrder() {
-        System.out.println("editOrder");
+    private void editOrder() throws InvalidUserInputException, DataPersistanceException, OrderNotFoundException, InvalidTaxInformationException, InvalidOrderInformationException {
+        view.displayEditOrderBanner();
+        LocalDate userDate = view.getUserDateChoice();
+        int userOrderId = view.getUserOrderIdChoice();
+        Order orderFound = service.getOrder(userOrderId, userDate);
+        boolean recalculate = false;
+
+        // edit customer name
+        String newCustomerName = view.getUserCustomerNameChoiceEdit(orderFound);
+        if(!newCustomerName.isBlank()) {
+            orderFound.setCustomerName(newCustomerName);
+        }
+
+        // edit state
+        String newState = view.getUserStateNameChoiceEdit(orderFound);
+        if(!newState.isBlank()) {
+            orderFound.setState(newState);
+            recalculate = true;
+        }
+
+        // edit product type
+        List<Product> productsList = service.getAllProduct();
+        String productOptionFromUser = view.getUserProductTypeByNumberChoiceEdit(orderFound, productsList);
+        if(!productOptionFromUser.isBlank()) {
+            int productIndex = Integer.parseInt(productOptionFromUser) - 1;
+            orderFound.setProductType(productsList.get(productIndex).getProductType());
+            recalculate = true;
+        }
+
+        // edit area size
+        String area = view.getUserAreaChoiceEdit(orderFound);
+        if(!area.isBlank()) {
+            orderFound.setArea(new BigDecimal(area).setScale(2, RoundingMode.HALF_UP));
+            recalculate = true;
+        }
+
+        if(service.validateOrderInfo(orderFound)) {
+            if(recalculate) {
+                service.calculateOrderCost(orderFound);
+            }
+            if(view.getUserConfirmation(orderFound)) {
+                service.editOrder(userDate, orderFound);
+            }
+        }
+
 
     }
 

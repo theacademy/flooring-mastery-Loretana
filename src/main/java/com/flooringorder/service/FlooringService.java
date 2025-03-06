@@ -12,13 +12,13 @@ public interface FlooringService {
 
     Order addOrder(Order newOrder, LocalDate date) throws InvalidTaxInformationException, DataPersistanceException, InvalidOrderInformationException;
 
-    Order editOrder(LocalDate date, Order order);
+    Order editOrder(LocalDate date, Order order) throws DataPersistanceException;
 
     boolean validateOrderInfo(Order order) throws InvalidOrderInformationException, DataPersistanceException, InvalidTaxInformationException;
 
     Order removeOrder(int orderId, LocalDate date);
 
-    Order getOrder(int orderId, LocalDate date);
+    Order getOrder(int orderId, LocalDate date) throws DataPersistanceException, OrderNotFoundException;
 
     List<Order> getOrdersByDate(LocalDate date) throws DataPersistanceException, OrderNotFoundException;
 

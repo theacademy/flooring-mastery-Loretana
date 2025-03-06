@@ -35,23 +35,30 @@ public class UserIOConsoleImpl implements UserIO {
 
     @Override
     public LocalDate readDate(String prompt) throws InvalidUserInputException {
-        print(prompt);
-        String dateAsText = sc.nextLine();
+        String dateAsText = "";
+        String isoDateRegex = "^[0-9]{4}-[0-9]{2}-[0-9]{2}$";
+        while(!dateAsText.matches(isoDateRegex)) {
+            print(prompt);
+            dateAsText = sc.nextLine();
+        }
         try {
             return LocalDate.parse(dateAsText, FORMATTER_ISO);
         } catch (DateTimeParseException e) {
-            throw new InvalidUserInputException("ERROR: Invalid date format, must follow ISO-8601 format: YYYY-MM-DD", e);
+            throw new InvalidUserInputException("ERROR: Invalid date", e);
         }
     }
 
     @Override
     public int readInt(String prompt, int min, int max) {
         String input = "";
+        String numberOnlyRegex = "^[0-9]+$";
         int val = Integer.MAX_VALUE;
         while(val > max || val < min) {
             print(prompt);
             input = sc.nextLine();
-            val = Integer.parseInt(input);
+            if(input.matches(numberOnlyRegex)) {
+                val = Integer.parseInt(input);
+            }
         }
         return val;
     }

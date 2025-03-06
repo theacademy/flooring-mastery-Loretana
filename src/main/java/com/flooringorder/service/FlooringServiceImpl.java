@@ -35,13 +35,12 @@ public class FlooringServiceImpl implements FlooringService {
 
     @Override
     public Order addOrder(Order newOrder, LocalDate date) throws DataPersistanceException {
-        orderDao.addOrder(newOrder, date);
-        return null;
+        return orderDao.addOrder(newOrder, date);
     }
 
     @Override
-    public Order editOrder(LocalDate date, Order order) {
-        return null;
+    public Order editOrder(LocalDate date, Order order) throws DataPersistanceException {
+        return orderDao.updateOrder(order, date);
     }
 
     @Override
@@ -95,8 +94,12 @@ public class FlooringServiceImpl implements FlooringService {
     }
 
     @Override
-    public Order getOrder(int orderId, LocalDate date) {
-        return null;
+    public Order getOrder(int orderId, LocalDate date) throws DataPersistanceException, OrderNotFoundException {
+        Order orderFound = orderDao.getOrderByIdAndDate(orderId, date);
+        if(orderFound == null) {
+            throw new OrderNotFoundException("ERROR: No orders found matching the specified date and ID.");
+        }
+        return orderDao.getOrderByIdAndDate(orderId, date);
     }
 
     /*

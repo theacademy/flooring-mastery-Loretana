@@ -15,7 +15,7 @@ public interface OrderDao {
 
     Order removeOrder(int orderId, LocalDate date);
 
-    Order updateOrder(int orderId, LocalDate date);
+    Order updateOrder(Order orderEdited, LocalDate date) throws DataPersistanceException;
 
     Order getOrderByIdAndDate(int orderId, LocalDate date) throws DataPersistanceException;
 
