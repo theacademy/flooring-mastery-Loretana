@@ -16,7 +16,6 @@ public class ProductDaoFileImpl implements ProductDao {
     private HashMap<String, Product> productMap = new HashMap<>();
     private final String PRODUCT_FILE_PATH;
     private static final String DELIMITER = ",";
-    private static final String PRODUCT_FILE_HEADER = "ProductType,CostPerSquareFoot,LaborCostPerSquareFoot";
 
     public ProductDaoFileImpl() {
         PRODUCT_FILE_PATH = "src/main/java/com/flooringorder/SampleFileData/Data/Products.txt";
@@ -61,41 +60,6 @@ public class ProductDaoFileImpl implements ProductDao {
             productMap.put(currentProduct.getProductType(), currentProduct);
         }
 
-    }
-
-    private void writeProduct() throws DataPersistanceException {
-        PrintWriter out;
-        try {
-            out = new PrintWriter(new FileWriter(PRODUCT_FILE_PATH));
-        } catch (IOException e) {
-            throw new DataPersistanceException("Could not save product data.", e);
-        }
-
-        String productAsText;
-        List<Product> productList = this.getAllProduct();
-        // insert product header as the first line of the file
-        out.println(PRODUCT_FILE_HEADER);
-
-        for(Product currentProduct : productList) {
-            productAsText = marshallProduct(currentProduct);
-            out.println(productAsText);
-            out.flush();
-        }
-
-        out.close();
-    }
-
-    /*
-     * Convert a Product object into a String
-     * */
-    private String marshallProduct(Product product){
-        String productAsText;
-
-        productAsText = product.getProductType() + DELIMITER;
-        productAsText += product.getCostPerSquareFoot().toString() + DELIMITER;
-        productAsText += product.getLaborCostPerSquareFoot().toString();
-
-        return productAsText;
     }
 
     /*

@@ -25,12 +25,13 @@ public class OrderDaoFileImpl implements OrderDao {
 
     public OrderDaoFileImpl() {
         ORDER_DIRECTORY_PATH = "src/main/java/com/flooringorder/SampleFileData/Orders/";
+
         EXPORT_DIRECTORY_FILE = "src/main/java/com/flooringorder/SampleFileData/Backup/DataExport.txt";
     }
 
-    public OrderDaoFileImpl(String ORDER_FILE_PATH, String EXPORT_DIRECTORY_PATH) {
+    public OrderDaoFileImpl(String ORDER_FILE_PATH, String EXPORT_DIRECTORY_FILE) {
         this.ORDER_DIRECTORY_PATH = ORDER_FILE_PATH;
-        this.EXPORT_DIRECTORY_FILE = EXPORT_DIRECTORY_PATH;
+        this.EXPORT_DIRECTORY_FILE = EXPORT_DIRECTORY_FILE;
     }
 
     @Override

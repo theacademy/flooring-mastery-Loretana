@@ -46,13 +46,13 @@ public class FlooringServiceImpl implements FlooringService {
     public boolean validateOrderInfo(Order order) throws InvalidOrderInformationException, DataPersistanceException, InvalidTaxInformationException {
 
         // Date must be in the future
-        if(order.getDate().isBefore(LocalDate.now())) {
+        if(order.getDate().compareTo(LocalDate.now()) < 1) {
             throw new InvalidOrderInformationException("ERROR: Date must be in the future.");
         }
 
         // CustomerName may not be blank
         String customerName = order.getCustomerName();
-        if(customerName.isBlank()) {
+        if(customerName == null || customerName.isBlank()) {
             throw new InvalidOrderInformationException("ERROR: Customer cannot be blank.");
         }
 
