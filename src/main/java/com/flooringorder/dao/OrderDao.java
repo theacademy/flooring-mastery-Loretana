@@ -13,7 +13,7 @@ public interface OrderDao {
 
     List<Order> getAllOrderByDate(LocalDate date) throws DataPersistanceException;
 
-    Order removeOrder(int orderId, LocalDate date);
+    Order removeOrder(int orderId, LocalDate date) throws DataPersistanceException;
 
     Order updateOrder(Order orderEdited, LocalDate date) throws DataPersistanceException;
 

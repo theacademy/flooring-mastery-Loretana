@@ -89,8 +89,8 @@ public class FlooringServiceImpl implements FlooringService {
     }
 
     @Override
-    public Order removeOrder(int orderId, LocalDate date) {
-        return null;
+    public Order removeOrder(int orderId, LocalDate date) throws DataPersistanceException {
+        return orderDao.removeOrder(orderId, date);
     }
 
     @Override

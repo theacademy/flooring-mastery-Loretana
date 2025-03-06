@@ -96,12 +96,12 @@ public class FlooringView {
         io.print(errorMsg);
     }
 
-    public boolean getUserConfirmation(Order newOrder) {
+    public boolean getUserConfirmation(Order newOrder, String prompt) {
         String userConfirmation = "";
         io.print("Current Order: " + newOrder.toString());
         boolean isValid = false;
         while(!isValid) {
-            userConfirmation = io.readString("Would you like to confirm and save the order? (Y/N)");
+            userConfirmation = io.readString(prompt);
             if(userConfirmation.equalsIgnoreCase("n") || userConfirmation.equalsIgnoreCase("y")) {
                 isValid = true;
             }

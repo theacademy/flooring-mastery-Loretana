@@ -16,7 +16,7 @@ public interface FlooringService {
 
     boolean validateOrderInfo(Order order) throws InvalidOrderInformationException, DataPersistanceException, InvalidTaxInformationException;
 
-    Order removeOrder(int orderId, LocalDate date);
+    Order removeOrder(int orderId, LocalDate date) throws DataPersistanceException;
 
     Order getOrder(int orderId, LocalDate date) throws DataPersistanceException, OrderNotFoundException;
 

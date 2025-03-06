@@ -92,7 +92,7 @@ public class FloorController {
 
         if(service.validateOrderInfo(newOrder)) {
             service.calculateOrderCost(newOrder);
-            if(view.getUserConfirmation(newOrder)) {
+            if(view.getUserConfirmation(newOrder, "Would you like to confirm and place the order? (Y/N)")) {
                 service.addOrder(newOrder, dateFromUser);
             }
         }
@@ -139,7 +139,7 @@ public class FloorController {
             if(recalculate) {
                 service.calculateOrderCost(orderFound);
             }
-            if(view.getUserConfirmation(orderFound)) {
+            if(view.getUserConfirmation(orderFound, "Would you like to confirm and save the order? (Y/N)")) {
                 service.editOrder(userDate, orderFound);
             }
         }
@@ -147,13 +147,20 @@ public class FloorController {
 
     }
 
-    private void removeOrder() {
-        System.out.println("removeOrder");
+    private void removeOrder() throws InvalidUserInputException, OrderNotFoundException, DataPersistanceException {
+        view.displayRemoveOrderBanner();
+        LocalDate userDate = view.getUserDateChoice();
+        int userOrderId = view.getUserOrderIdChoice();
+        Order orderFound = service.getOrder(userOrderId, userDate);
+
+        if(view.getUserConfirmation(orderFound, "Would you like to confirm and remove the order? (Y/N)")) {
+            service.removeOrder(orderFound.getOrderId(), userDate);
+        }
 
     }
 
     private void exportAllData() {
-        System.out.println("exportAllData");
+        view.displayExportOrdersBanner();
 
     }
 

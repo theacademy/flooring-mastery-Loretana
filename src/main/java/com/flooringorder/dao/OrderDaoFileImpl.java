@@ -57,8 +57,11 @@ public class OrderDaoFileImpl implements OrderDao {
     }
 
     @Override
-    public Order removeOrder(int orderId, LocalDate date) {
-        return null;
+    public Order removeOrder(int orderId, LocalDate date) throws DataPersistanceException {
+        loadAllOrders();
+        Order removedOrder = ordersMap.get(date).remove(orderId);
+        writeOrder(date);
+        return removedOrder;
     }
 
     /*
