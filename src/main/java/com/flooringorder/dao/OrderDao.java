@@ -21,4 +21,6 @@ public interface OrderDao {
 
     void exportAll() throws DataPersistanceException;
 
+    int getLatestOrderId() throws DataPersistanceException;
+
 }

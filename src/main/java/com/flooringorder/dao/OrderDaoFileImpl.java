@@ -82,6 +82,21 @@ public class OrderDaoFileImpl implements OrderDao {
         this.loadAllOrders();
     }
 
+    /*
+    * Retrieve the latest order Id, 0 if none
+    * */
+    @Override
+    public int getLatestOrderId() throws DataPersistanceException {
+        loadAllOrders();
+        Set<LocalDate> keysDate = ordersMap.keySet();
+        Set<Integer> odersId = new HashSet<>();
+        for(LocalDate currentKeyDate: keysDate) {
+            Set<Integer> ordersIdSet = ordersMap.get(currentKeyDate).keySet();
+            odersId.addAll(ordersIdSet);
+        }
+        return odersId.stream().max(Integer::compare).orElse(0);
+    }
+
     private List<String> getAllOrdersFileName() {
         File orderDirectory = new File(ORDER_DIRECTORY_PATH);
         File[] ordersFiles = orderDirectory.listFiles();

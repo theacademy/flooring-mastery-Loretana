@@ -29,7 +29,8 @@ public class UserIOConsoleImpl implements UserIO {
     @Override
     public int readInt(String prompt) {
         print(prompt);
-        return sc.nextInt();
+        String numAsText = sc.nextLine();
+        return Integer.parseInt(numAsText);
     }
 
     @Override

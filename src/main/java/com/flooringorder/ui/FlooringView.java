@@ -45,7 +45,7 @@ public class FlooringView {
     }
 
     public String getUserStateChoice() {
-        return io.readString("Please enter a state: ");
+        return io.readString("Please enter a state name: ");
     }
 
     public String getUserAreaChoice() {
@@ -61,6 +61,7 @@ public class FlooringView {
         int count = 1;
         for(Product currentProduct : products) {
             io.print(count + " - " + currentProduct.getProductType());
+            count++;
         }
     }
 
@@ -93,5 +94,20 @@ public class FlooringView {
     public void displayErrorMessage(String errorMsg) {
         io.print("=== ERROR ===");
         io.print(errorMsg);
+    }
+
+    public boolean getUserConfirmation(Order newOrder) {
+        String userConfirmation = "";
+        io.print("Current Order: " + newOrder.toString());
+        boolean isValid = false;
+        while(!isValid) {
+            userConfirmation = io.readString("Would you like to confirm and place your order? (Y/N)");
+            if(userConfirmation.equalsIgnoreCase("n") || userConfirmation.equalsIgnoreCase("y")) {
+                isValid = true;
+            }
+        }
+
+        return (userConfirmation.equalsIgnoreCase("Y"));
+
     }
 }

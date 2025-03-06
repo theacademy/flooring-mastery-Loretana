@@ -2,13 +2,18 @@ package com.flooringorder.controller;
 
 import com.flooringorder.dao.DataPersistanceException;
 import com.flooringorder.model.Order;
+import com.flooringorder.model.Product;
 import com.flooringorder.service.FlooringService;
+import com.flooringorder.service.InvalidOrderInformationException;
+import com.flooringorder.service.InvalidTaxInformationException;
 import com.flooringorder.service.OrderNotFoundException;
 import com.flooringorder.ui.FlooringView;
 import com.flooringorder.ui.InvalidUserInputException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -50,21 +55,47 @@ public class FloorController {
                         keepGoing = false;
                         break;
                 }
-            } catch (OrderNotFoundException | DataPersistanceException | InvalidUserInputException e) {
+            } catch (OrderNotFoundException | DataPersistanceException | InvalidUserInputException |
+                     InvalidTaxInformationException | InvalidOrderInformationException e) {
                 view.displayErrorMessage(e.getMessage());
             }
         }
     }
 
     private void displayOrder() throws OrderNotFoundException, DataPersistanceException, InvalidUserInputException {
+        view.displayBanner();
         LocalDate date = view.getUserDateChoice();
         List<Order> orderFound = service.getOrdersByDate(date);
         view.displayAllOrders(orderFound);
     }
 
-    private void addOrder() throws InvalidUserInputException {
-        System.out.println("addOrder");
-        LocalDate dateAsText = view.getUserDateChoice();
+
+    private void addOrder() throws InvalidUserInputException, DataPersistanceException, InvalidTaxInformationException, InvalidOrderInformationException {
+        view.displayAddOrderBanner();
+        LocalDate dateFromUser = view.getUserDateChoice();
+        String customerNameFromUser = view.getUserCustomerNameChoice().trim();
+        String stateNameFromUser = view.getUserStateChoice();
+        BigDecimal areaFromUser = new BigDecimal(view.getUserAreaChoice()).setScale(2, RoundingMode.HALF_UP);
+        List<Product> productsList = service.getAllProduct();
+        int productOptionFromUser = view.getUserProductTypeByNumberChoice(productsList);
+
+        // adjust index to zero-based
+        String productType =  productsList.get(productOptionFromUser - 1).getProductType();
+
+        int latestOrderId = service.getLatestOrderId();
+        Order newOrder = new Order(dateFromUser, latestOrderId+1);
+
+        newOrder.setCustomerName(customerNameFromUser);
+        newOrder.setState(stateNameFromUser);
+        newOrder.setProductType(productType);
+        newOrder.setArea(areaFromUser);
+
+        if(service.validateOrderInfo(newOrder)) {
+            service.calculateOrderCost(newOrder);
+            if(view.getUserConfirmation(newOrder)) {
+                service.addOrder(newOrder, dateFromUser);
+            }
+        }
 
     }
 
