@@ -20,6 +20,12 @@
     <bean id="orderDao"
           class="com.flooringorder.dao.OrderDaoFileImpl"/>
 
+    <bean id="productDao"
+          class="com.flooringorder.dao.ProductDaoFileImpl"/>
+
+    <bean id="taxDao"
+          class="com.flooringorder.dao.TaxDaoFileImpl"/>
+
     <bean id="orderDaoStub"
           class="com.flooringorder.dao.OrderDaoStubFileImpl"/>
 

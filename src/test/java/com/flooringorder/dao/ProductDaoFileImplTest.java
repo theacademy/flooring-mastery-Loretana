@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ProductDaoFileImplTest {
 
     ProductDaoFileImpl testProductDao;
+    public final static String TEST_PRODUCT_FILE = "src/main/java/com/flooringorder/test/Data/ProductsTest.txt";
 
     @BeforeEach
     public void setUp() throws IOException {
