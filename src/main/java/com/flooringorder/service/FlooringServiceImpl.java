@@ -125,6 +125,10 @@ public class FlooringServiceImpl implements FlooringService {
 
     @Override
     public BigDecimal calculateOrderCost(Order order) {
+        if(order == null) {
+            return BigDecimal.ZERO;
+        }
+
         BigDecimal area = order.getArea();
         BigDecimal costPerSquareFoot = order.getCostPerSquareFoot();
         BigDecimal laborCostPerSquareFoot = order.getLaborCostPerSquareFoot();

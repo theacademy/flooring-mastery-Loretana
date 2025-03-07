@@ -34,6 +34,9 @@ public class OrderDaoFileImpl implements OrderDao {
         this.EXPORT_DIRECTORY_FILE = EXPORT_DIRECTORY_FILE;
     }
 
+    /*
+    * Return added Order
+    * */
     @Override
     public Order addOrder(Order newOrder, LocalDate date) throws DataPersistanceException {
         loadAllOrders();
@@ -41,9 +44,9 @@ public class OrderDaoFileImpl implements OrderDao {
         // if we have no key that match the date, assign an empty new HashMap as a value
         ordersMap.putIfAbsent(date, new HashMap<>());
 
-        Order addedOrder = ordersMap.get(date).put(newOrder.getOrderId(), newOrder);
+        Order previousOrder = ordersMap.get(date).put(newOrder.getOrderId(), newOrder);
         writeOrder(date);
-        return addedOrder;
+        return previousOrder;
     }
 
     /*
@@ -57,6 +60,9 @@ public class OrderDaoFileImpl implements OrderDao {
         return (ordersFound == null) ? null : new ArrayList<>(ordersFound.values());
     }
 
+    /*
+    * Return the removed order object
+    * */
     @Override
     public Order removeOrder(int orderId, LocalDate date) throws DataPersistanceException {
         loadAllOrders();
@@ -108,6 +114,9 @@ public class OrderDaoFileImpl implements OrderDao {
         return odersId.stream().max(Integer::compare).orElse(0);
     }
 
+    /*
+    * Retrieve a list of all filename in Order/ directory
+    * */
     private List<String> getAllOrdersFileName() {
         File orderDirectory = new File(ORDER_DIRECTORY_PATH);
         File[] ordersFiles = orderDirectory.listFiles();

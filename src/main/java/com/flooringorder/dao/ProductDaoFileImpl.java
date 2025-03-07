@@ -25,18 +25,27 @@ public class ProductDaoFileImpl implements ProductDao {
         this.PRODUCT_FILE_PATH = PRODUCT_FILE;
     }
 
+    /*
+    * Return all existing product in Products.txt file.
+    * */
     @Override
     public List<Product> getAllProduct() throws DataPersistanceException {
         loadProduct();
         return new ArrayList<>(productMap.values());
     }
 
+    /*
+    * Return a product obj by his type
+    * */
     @Override
     public Product getProductByType(String productType) throws DataPersistanceException {
         loadProduct();
         return productMap.get(productType);
     }
 
+    /*
+    * Load all product from file into memory hashmap
+    * */
     private void loadProduct() throws DataPersistanceException {
         Scanner scanner;
 

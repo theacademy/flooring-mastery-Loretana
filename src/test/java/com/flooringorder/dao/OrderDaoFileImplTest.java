@@ -60,7 +60,8 @@ class OrderDaoFileImplTest {
         peterOrder.setTax(new BigDecimal("84.77"));
         peterOrder.setTotal(new BigDecimal("1989.62"));
 
-        testOrderDao.addOrder(peterOrder, date);
+        Order previousOrder = testOrderDao.addOrder(peterOrder, date);
+        assertNull(previousOrder, "PreviousOrder should be null because there's no previous order assign to PeterOrder");
         Order shouldBePeterOrder = testOrderDao.getOrderByIdAndDate(1, date);
 
         assertNotNull(shouldBePeterOrder, "Peter Order should exists");

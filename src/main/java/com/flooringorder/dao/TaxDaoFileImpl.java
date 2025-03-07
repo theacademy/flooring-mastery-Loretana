@@ -32,11 +32,17 @@ public class TaxDaoFileImpl implements TaxDao {
         return taxMap.get(taxAbbrev);
     }
 
+    /*
+    * Return a list of all Tax obj from Taxes.txt file
+    * */
     public List<Tax> getAllTax() throws DataPersistanceException {
         loadTax();
         return new ArrayList<>(taxMap.values());
     }
 
+    /*
+    * Load all Tax obj into memory hashmap from Taxes.txt
+    * */
     private void loadTax() throws DataPersistanceException {
         Scanner scanner;
         try {
