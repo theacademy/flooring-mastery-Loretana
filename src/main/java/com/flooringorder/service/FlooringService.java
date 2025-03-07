@@ -131,5 +131,11 @@ public interface FlooringService {
      */
     void validateArea(Order order, String area) throws InvalidOrderInformationException;
 
+    /**
+     * Validate date business logic.
+     *
+     * @param dateFromUser to be validated
+     * @throws InvalidOrderInformationException
+     */
     void validateDate(LocalDate dateFromUser) throws InvalidOrderInformationException;
 }

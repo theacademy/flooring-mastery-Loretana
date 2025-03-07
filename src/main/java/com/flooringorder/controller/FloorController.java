@@ -110,7 +110,7 @@ public class FloorController {
 
         // Retrieve state from user
         do {
-            String stateNameFromUser = view.getUserStateChoice();
+            String stateNameFromUser = view.getUserStateChoice().toUpperCase();
             if(stateNameFromUser.isBlank()) {
                 hasError = true;
                 continue;
@@ -126,7 +126,6 @@ public class FloorController {
         } while(hasError);
 
 
-
         // Retrieve area size from user
         do {
             String areaFromUser = view.getUserAreaChoice();
@@ -137,8 +136,11 @@ public class FloorController {
             try {
                 service.validateArea(newOrder, areaFromUser);
                 hasError = false;
-            } catch (InvalidOrderInformationException | NumberFormatException e) {
+            } catch (InvalidOrderInformationException e) {
                 view.displayErrorMessage(e.getMessage());
+                hasError = true;
+            } catch (NumberFormatException e) {
+                view.displayErrorMessage("ERROR: area must be a number.");
                 hasError = true;
             }
 
@@ -230,6 +232,9 @@ public class FloorController {
                     hasError = false;
                 } catch (InvalidOrderInformationException e) {
                     view.displayErrorMessage(e.getMessage());
+                    hasError = true;
+                } catch (NumberFormatException e) {
+                    view.displayErrorMessage("ERROR: area must be a number.");
                     hasError = true;
                 }
             }
