@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class TaxDaoFileImplTest {
 
     TaxDaoFileImpl testTaxDao;
-    public final static String TEST_TAX_FILE = "src/main/java/com/flooringorder/test/Data/TaxesTest.txt";
+    public final static String TEST_TAX_FILE = "src/test/resources/Test/Data/TaxesTest.txt";
 
     @BeforeEach
     public void setUp() throws IOException {
@@ -22,14 +22,14 @@ class TaxDaoFileImplTest {
 
     @Test
     void getTaxByNameAbbrev() throws DataPersistanceException {
-        Tax taxSelected = testTaxDao.getTaxByNameAbbrev("Texas");
+        Tax taxSelected = testTaxDao.getTaxByNameAbbrev("TX");
         assertEquals("Texas", taxSelected.getStateName(), "State name should be Texas");
 
         String calforniaName = "Calfornia";
         String calforniaAbbrev = "CA";
         BigDecimal taxRate = new BigDecimal("25.00");
 
-        taxSelected = testTaxDao.getTaxByNameAbbrev(calforniaName);
+        taxSelected = testTaxDao.getTaxByNameAbbrev(calforniaAbbrev);
         assertEquals(calforniaName, taxSelected.getStateName(), "State name should be Calfornia");
         assertEquals(calforniaAbbrev, taxSelected.getStateAbbreviation(), "State abbreviation should be CA");
         assertEquals(taxRate, taxSelected.getTaxRate(), "State tax rate should be 25.00");

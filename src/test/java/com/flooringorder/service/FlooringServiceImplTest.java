@@ -38,10 +38,8 @@ class FlooringServiceImplTest {
         order.setProductType("Tile");
 
         try {
-            service.validateOrderInfo(order);
+            service.validateDate(order.getDate());
             fail("Expected Invalid Order Information (Date must be in the future) Exception was not thrown.");
-        } catch (InvalidTaxInformationException | DataPersistanceException e) {
-            fail("Incorrect exception was thrown.");
         } catch(InvalidOrderInformationException e) {
             // Expected to come here
         }
@@ -63,7 +61,7 @@ class FlooringServiceImplTest {
         order.setProductType("Tile");
 
         try {
-            service.validateOrderInfo(order);
+            service.validateDate(order.getDate());
         } catch(InvalidOrderInformationException e) {
             fail("No exception should have been thrown.");
         }
@@ -84,7 +82,7 @@ class FlooringServiceImplTest {
         order.setProductType("Tile");
 
         try {
-            service.validateOrderInfo(order);
+            service.validateDate(order.getDate());
             fail("Exception should have been thrown.");
         } catch(InvalidOrderInformationException e) {
         }
@@ -105,20 +103,16 @@ class FlooringServiceImplTest {
         order.setProductType("Tile");
 
         try {
-            service.validateOrderInfo(order);
+            service.validateCustomerName(order, order.getCustomerName());
             fail("Exception should have been thrown.");
-        } catch (InvalidTaxInformationException | DataPersistanceException e) {
-            fail("Incorrect exception was thrown.");
         } catch(InvalidOrderInformationException e) {}
 
         // set customer name to null
         order.setCustomerName(null);
 
         try {
-            service.validateOrderInfo(order);
+            service.validateCustomerName(order, order.getCustomerName());
             fail("Exception should have been thrown.");
-        } catch (InvalidTaxInformationException | DataPersistanceException e) {
-            fail("Incorrect exception was thrown.");
         } catch(InvalidOrderInformationException e) {}
 
     }
@@ -138,10 +132,8 @@ class FlooringServiceImplTest {
         order.setProductType("Tile");
 
         try {
-            service.validateOrderInfo(order);
+            service.validateCustomerName(order, order.getCustomerName());
             fail("Exception should have been thrown.");
-        } catch (InvalidTaxInformationException | DataPersistanceException e) {
-            fail("Incorrect exception was thrown.");
         } catch(InvalidOrderInformationException e) {
 
         }
@@ -162,13 +154,13 @@ class FlooringServiceImplTest {
         order.setProductType("Tile");
 
         try {
-            service.validateOrderInfo(order);
+            service.validateCustomerName(order, order.getCustomerName());
             order.setCustomerName("Peter812");
-            service.validateOrderInfo(order);
+            service.validateCustomerName(order, order.getCustomerName());
             order.setCustomerName("777");
-            service.validateOrderInfo(order);
+            service.validateCustomerName(order, order.getCustomerName());
             order.setCustomerName("...,,,");
-            service.validateOrderInfo(order);
+            service.validateCustomerName(order, order.getCustomerName());
         } catch(InvalidOrderInformationException e) {
             fail("No exception should have been thrown.");
         }
@@ -189,9 +181,9 @@ class FlooringServiceImplTest {
         order.setProductType("Tile");
 
         try {
-            service.validateOrderInfo(order);
+            service.validateState(order, order.getState());
             fail("Exception should have been thrown.");
-        } catch (DataPersistanceException | InvalidOrderInformationException e) {
+        } catch (DataPersistanceException e) {
             fail("Incorrect exception was thrown.");
         } catch(InvalidTaxInformationException e) {
         }
@@ -212,7 +204,7 @@ class FlooringServiceImplTest {
         order.setProductType("Tile");
 
         try {
-            service.validateOrderInfo(order);
+            service.validateState(order, order.getState());
         } catch (Exception e) {
             fail("No exception should have been thrown");
         }
@@ -229,17 +221,14 @@ class FlooringServiceImplTest {
         order = new Order(orderDate, orderId);
         order.setCustomerName("Peter, Parker.");
         order.setState("Texas");
-        order.setArea(new BigDecimal("-1"));
         order.setProductType("Tile");
 
-        try {
-            service.validateOrderInfo(order);
-            fail("Exception should have been thrown.");
-        } catch (InvalidTaxInformationException | DataPersistanceException e) {
-            fail("Incorrect exception was thrown.");
-        } catch (InvalidOrderInformationException e) {
+        String negativeArea = "-1";
 
-        }
+        try {
+            service.validateArea(order, negativeArea);
+            fail("Exception should have been thrown.");
+        } catch (InvalidOrderInformationException e) {}
     }
 
     /*
@@ -253,14 +242,13 @@ class FlooringServiceImplTest {
         order = new Order(orderDate, orderId);
         order.setCustomerName("Peter, Parker.");
         order.setState("Texas");
-        order.setArea(new BigDecimal("99.99"));
         order.setProductType("Tile");
 
+        String underSizeArea = "99.99";
+
         try {
-            service.validateOrderInfo(order);
+            service.validateArea(order, underSizeArea);
             fail("Exception should have been thrown.");
-        } catch (InvalidTaxInformationException | DataPersistanceException e) {
-            fail("Incorrect exception was thrown.");
         } catch (InvalidOrderInformationException e) {
 
         }
@@ -279,10 +267,7 @@ class FlooringServiceImplTest {
         BigDecimal oldTotal = orderSelected.getTotal();
 
         orderSelected.setCustomerName("Bob");
-        BigDecimal total = BigDecimal.ZERO;
-        if(service.validateOrderInfo(orderSelected)) {
-            total = service.calculateOrderCost(orderSelected);
-        }
+        BigDecimal total = service.calculateOrderCost(orderSelected);
 
         assertEquals(oldMaterialCost, orderSelected.getMaterialCost(), "Material cost should be the same.");
         assertEquals(oldLaborCost, orderSelected.getLaborCost(), "Labor cost should be the same.");
@@ -303,10 +288,8 @@ class FlooringServiceImplTest {
 
         // edit area
         orderSelected.setArea(new BigDecimal("100"));
-        BigDecimal total = BigDecimal.ZERO;
-        if(service.validateOrderInfo(orderSelected)) {
-            total = service.calculateOrderCost(orderSelected);
-        }
+        BigDecimal total = service.calculateOrderCost(orderSelected);
+
 
         assertNotEquals(oldMaterialCost, orderSelected.getMaterialCost(), "Material cost should be different.");
         assertNotEquals(oldLaborCost, orderSelected.getLaborCost(), "Labor cost should be different.");
@@ -327,14 +310,10 @@ class FlooringServiceImplTest {
         BigDecimal oldTotal = orderSelected.getTotal();
         BigDecimal oldTaxRate = orderSelected.getTaxRate();
 
-
         // edit state
         orderSelected.setState("Kentucky");
-        BigDecimal total = BigDecimal.ZERO;
-        if(service.validateOrderInfo(orderSelected)) {
-            total = service.calculateOrderCost(orderSelected);
-        }
-
+        orderSelected.setTaxRate(new BigDecimal("6.00"));
+        BigDecimal total = service.calculateOrderCost(orderSelected);
         assertNotEquals(oldTaxRate, orderSelected.getTaxRate(), "TaxRate should be different.");
         assertEquals(oldMaterialCost, orderSelected.getMaterialCost(), "Material cost should be the same.");
         assertEquals(oldLaborCost, orderSelected.getLaborCost(), "Labor cost should be the same.");
@@ -359,12 +338,11 @@ class FlooringServiceImplTest {
         BigDecimal oldLaborCostPerSquareFoot = orderSelected.getLaborCostPerSquareFoot();
         String oldProductType = orderSelected.getProductType();
 
-        // edit area
+        // edit product type
         orderSelected.setProductType("Wood");
-        BigDecimal total = BigDecimal.ZERO;
-        if(service.validateOrderInfo(orderSelected)) {
-            total = service.calculateOrderCost(orderSelected);
-        }
+        orderSelected.setCostPerSquareFoot(new BigDecimal("5.15"));
+        orderSelected.setLaborCostPerSquareFoot(new BigDecimal("4.75"));
+        BigDecimal total = service.calculateOrderCost(orderSelected);
 
         assertNotEquals(oldMaterialCost, orderSelected.getMaterialCost(), "Material cost should be different.");
         assertNotEquals(oldLaborCost, orderSelected.getLaborCost(), "Labor cost should be different.");
