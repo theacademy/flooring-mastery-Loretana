@@ -64,6 +64,7 @@ public class TaxDaoFileImpl implements TaxDao {
             taxMap.put(currentTax.getStateAbbreviation(), currentTax);
         }
 
+        scanner.close();
     }
 
     /*

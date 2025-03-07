@@ -69,6 +69,8 @@ public class ProductDaoFileImpl implements ProductDao {
             productMap.put(currentProduct.getProductType(), currentProduct);
         }
 
+        scanner.close();
+
     }
 
     /*

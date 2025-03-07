@@ -93,6 +93,9 @@ public class OrderDaoFileImpl implements OrderDao {
         return (ordersFound == null) ? null : ordersFound.get(orderId);
     }
 
+    /*
+    * Load all order into Backup/DataExport.txt file
+    * */
     @Override
     public void exportAll() throws DataPersistanceException {
         loadAllOrders();
@@ -172,6 +175,8 @@ public class OrderDaoFileImpl implements OrderDao {
             ordersMap.putIfAbsent(date, new HashMap<>());
             ordersMap.get(date).put(currentOrder.getOrderId(), currentOrder);
         }
+
+        scanner.close();
 
     }
 

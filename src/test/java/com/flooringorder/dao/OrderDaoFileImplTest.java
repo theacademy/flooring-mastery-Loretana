@@ -6,41 +6,53 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 class OrderDaoFileImplTest {
 
     OrderDaoFileImpl testOrderDao;
-    public final static String TEST_ORDER_DIRECTORY = "src/main/java/com/flooringorder/test/Orders/";
-    public final static String TEST_EXPORT_DIRECTORY_FILE = "src/main/java/com/flooringorder/test/Backup/DataExportTest.txt";
+
+    public final static String TEST_ORDER_DIRECTORY = "src/test/resources/Test/Orders/";
+    public final static String TEST_EXPORT_FILE = "DataExportTest.txt";
+    public final static String TEST_EXPORT_DIRECTORY = "src/test/resources/Test/Backup/";
 
     @BeforeEach
     public void setUp() throws IOException {
-        // Use the FileWriter to quickly blank the file
-        new FileWriter(TEST_EXPORT_DIRECTORY_FILE);
-        testOrderDao = new OrderDaoFileImpl(TEST_ORDER_DIRECTORY, TEST_EXPORT_DIRECTORY_FILE);
+       testOrderDao = new OrderDaoFileImpl(TEST_ORDER_DIRECTORY, TEST_EXPORT_DIRECTORY + TEST_EXPORT_FILE);
+
+       File orderDirectoryTest = new File(TEST_ORDER_DIRECTORY);
+       File exportDirectoryTest = new File(TEST_EXPORT_DIRECTORY);
+       if(!orderDirectoryTest.exists()) {
+           orderDirectoryTest.mkdir();
+       }
+       if(!exportDirectoryTest.exists()) {
+           exportDirectoryTest.mkdir();
+       }
+
     }
 
+    /*
+    * Delete all order test file created
+    * */
     @AfterEach
     public void tearDown() throws IOException {
         File orderDirectoryTest = new File(TEST_ORDER_DIRECTORY);
         File[] ordersTestFiles = orderDirectoryTest.listFiles();
         if(ordersTestFiles != null) {
             for(File currentFile: ordersTestFiles) {
-                new FileWriter(TEST_ORDER_DIRECTORY + currentFile.getName());
+                    currentFile.delete();
             }
         }
+        File exportDirectoryTestFile = new File(TEST_EXPORT_DIRECTORY+TEST_EXPORT_FILE);
+        exportDirectoryTestFile.delete();
     }
-
 
     @Test
     void testAddOrderAndGetAllOrderByDate() throws DataPersistanceException {
@@ -226,7 +238,7 @@ class OrderDaoFileImplTest {
         testOrderDao.addOrder(peterOrder, secondDate);
 
         testOrderDao.exportAll();
-        long exportFileLineCount = Files.lines(Path.of(TEST_EXPORT_DIRECTORY_FILE)).count();
+        long exportFileLineCount = Files.lines(Path.of(TEST_EXPORT_DIRECTORY + TEST_EXPORT_FILE)).count();
         assertEquals(3, exportFileLineCount, "Export file should contains 2 orders lines and 1 header");
     }
 
