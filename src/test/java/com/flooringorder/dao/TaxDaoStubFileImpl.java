@@ -15,7 +15,7 @@ public class TaxDaoStubFileImpl implements TaxDao {
     }
 
     @Override
-    public Tax getTaxByName(String taxName) throws DataPersistanceException {
+    public Tax getTaxByNameAbbrev(String taxName) throws DataPersistanceException {
         if (taxName.equals(texasTax.getStateName())) {
             return texasTax;
         } else if(taxName.equals(kentuckyTax.getStateName())) {

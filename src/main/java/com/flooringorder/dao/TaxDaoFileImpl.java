@@ -27,9 +27,9 @@ public class TaxDaoFileImpl implements TaxDao {
     }
 
     @Override
-    public Tax getTaxByName(String taxName) throws DataPersistanceException {
+    public Tax getTaxByNameAbbrev(String taxAbbrev) throws DataPersistanceException {
         loadTax();
-        return taxMap.get(taxName);
+        return taxMap.get(taxAbbrev);
     }
 
     public List<Tax> getAllTax() throws DataPersistanceException {
@@ -55,7 +55,7 @@ public class TaxDaoFileImpl implements TaxDao {
         while(scanner.hasNextLine()) {
             currentLine = scanner.nextLine();
             currentTax = unmarshallTax(currentLine);
-            taxMap.put(currentTax.getStateName(), currentTax);
+            taxMap.put(currentTax.getStateAbbreviation(), currentTax);
         }
 
     }

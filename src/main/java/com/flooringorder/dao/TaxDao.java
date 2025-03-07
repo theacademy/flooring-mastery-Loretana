@@ -4,7 +4,8 @@ import com.flooringorder.model.Tax;
 
 public interface TaxDao {
 
-    Tax getTaxByName(String taxName) throws DataPersistanceException;
+    Tax getTaxByNameAbbrev(String taxName) throws DataPersistanceException;
 
 }
+
 

@@ -45,7 +45,7 @@ public class FlooringView {
     }
 
     public String getUserStateChoice() {
-        return io.readString("Please enter a state name: ");
+        return io.readString("Please enter a state name abbreviation: ");
     }
 
     public String getUserAreaChoice() {
@@ -60,7 +60,9 @@ public class FlooringView {
     public void displayAllProductType(List<Product> products) {
         int count = 1;
         for(Product currentProduct : products) {
-            io.print(count + " - " + currentProduct.getProductType());
+            io.print(count + " - " + currentProduct.getProductType()
+                    + "\t\t\tCostPerSquareFoot: $" + currentProduct.getCostPerSquareFoot()
+                    + "\tLaborCostPerSquareFoot: $" + currentProduct.getLaborCostPerSquareFoot());
             count++;
         }
     }

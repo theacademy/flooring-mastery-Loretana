@@ -21,15 +21,15 @@ class TaxDaoFileImplTest {
     }
 
     @Test
-    void getTaxByName() throws DataPersistanceException {
-        Tax taxSelected = testTaxDao.getTaxByName("Texas");
+    void getTaxByNameAbbrev() throws DataPersistanceException {
+        Tax taxSelected = testTaxDao.getTaxByNameAbbrev("Texas");
         assertEquals("Texas", taxSelected.getStateName(), "State name should be Texas");
 
         String calforniaName = "Calfornia";
         String calforniaAbbrev = "CA";
         BigDecimal taxRate = new BigDecimal("25.00");
 
-        taxSelected = testTaxDao.getTaxByName(calforniaName);
+        taxSelected = testTaxDao.getTaxByNameAbbrev(calforniaName);
         assertEquals(calforniaName, taxSelected.getStateName(), "State name should be Calfornia");
         assertEquals(calforniaAbbrev, taxSelected.getStateAbbreviation(), "State abbreviation should be CA");
         assertEquals(taxRate, taxSelected.getTaxRate(), "State tax rate should be 25.00");

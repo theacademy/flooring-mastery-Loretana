@@ -8,7 +8,6 @@ import com.flooringorder.model.Order;
 import com.flooringorder.model.Product;
 import com.flooringorder.model.Tax;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -63,7 +62,7 @@ public class FlooringServiceImpl implements FlooringService {
         }
 
         // State must exist
-        Tax tax = taxDao.getTaxByName(order.getState());
+        Tax tax = taxDao.getTaxByNameAbbrev(order.getState());
         if(tax == null) {
             throw new InvalidTaxInformationException("ERROR: State doesn't exist.");
         }
