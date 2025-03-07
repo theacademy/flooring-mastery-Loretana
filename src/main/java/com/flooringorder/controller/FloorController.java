@@ -12,8 +12,6 @@ import com.flooringorder.ui.InvalidUserInputException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -72,30 +70,95 @@ public class FloorController {
 
     private void addOrder() throws InvalidUserInputException, DataPersistanceException, InvalidTaxInformationException, InvalidOrderInformationException {
         view.displayAddOrderBanner();
-        LocalDate dateFromUser = view.getUserDateChoice();
-        String customerNameFromUser = view.getUserCustomerNameChoice().trim();
-        String stateNameFromUser = view.getUserStateChoice();
-        BigDecimal areaFromUser = new BigDecimal(view.getUserAreaChoice()).setScale(2, RoundingMode.HALF_UP);
-        List<Product> productsList = service.getAllProduct();
-        int productOptionFromUser = view.getUserProductTypeByNumberChoice(productsList);
+        boolean hasError = false;
+        LocalDate dateFromUser = null;
 
-        // adjust index to zero-based
-        String productType =  productsList.get(productOptionFromUser - 1).getProductType();
+        // Retrieve future date from user
+        do {
+            dateFromUser = view.getUserDateChoice();
+            try {
+                service.validateDate(dateFromUser);
+                hasError = false;
+            } catch (InvalidOrderInformationException e) {
+                view.displayErrorMessage(e.getMessage());
+                hasError = true;
+            }
+
+        } while(hasError);
+
 
         int latestOrderId = service.getLatestOrderId();
         Order newOrder = new Order(dateFromUser, latestOrderId+1);
 
-        newOrder.setCustomerName(customerNameFromUser);
-        newOrder.setState(stateNameFromUser);
-        newOrder.setProductType(productType);
-        newOrder.setArea(areaFromUser);
 
-        if(service.validateOrderInfo(newOrder)) {
-            service.calculateOrderCost(newOrder);
-            if(view.getUserConfirmation(newOrder, "Would you like to confirm and place the order? (Y/N)")) {
-                service.addOrder(newOrder, dateFromUser);
+        // Retrieve customer name from user
+        do {
+            String customerNameFromUser = view.getUserCustomerNameChoice().trim();
+            if(customerNameFromUser.isBlank()) {
+                hasError = true;
+                continue;
             }
+            try {
+                service.validateCustomerName(newOrder, customerNameFromUser);
+                hasError = false;
+            } catch (InvalidOrderInformationException e) {
+                view.displayErrorMessage(e.getMessage());
+                hasError = true;
+            }
+
+        } while(hasError);
+
+        // Retrieve state from user
+        do {
+            String stateNameFromUser = view.getUserStateChoice();
+            if(stateNameFromUser.isBlank()) {
+                hasError = true;
+                continue;
+            }
+            try {
+                service.validateState(newOrder, stateNameFromUser);
+                hasError = false;
+            } catch (InvalidTaxInformationException e) {
+                view.displayErrorMessage(e.getMessage());
+                hasError = true;
+            }
+
+        } while(hasError);
+
+
+
+        // Retrieve area size from user
+        do {
+            String areaFromUser = view.getUserAreaChoice();
+            if(areaFromUser.isBlank()) {
+                hasError = true;
+                continue;
+            }
+            try {
+                service.validateArea(newOrder, areaFromUser);
+                hasError = false;
+            } catch (InvalidOrderInformationException | NumberFormatException e) {
+                view.displayErrorMessage(e.getMessage());
+                hasError = true;
+            }
+
+        } while(hasError);
+
+        // Get product type from user
+        List<Product> productsList = service.getAllProduct();
+        int productOptionFromUser = view.getUserProductTypeByNumberChoice(productsList);
+        // adjust index to zero-based
+        Product selectedProduct = productsList.get(productOptionFromUser - 1);
+        newOrder.setProductType(selectedProduct.getProductType());
+        newOrder.setLaborCostPerSquareFoot(selectedProduct.getLaborCostPerSquareFoot());
+        newOrder.setCostPerSquareFoot(selectedProduct.getCostPerSquareFoot());
+
+        service.calculateOrderCost(newOrder);
+        if(view.getUserConfirmation(newOrder, "Would you like to confirm and place the order? (Y/N)")) {
+            service.addOrder(newOrder, dateFromUser);
         }
+
+
 
     }
 
@@ -105,45 +168,81 @@ public class FloorController {
         int userOrderId = view.getUserOrderIdChoice();
         Order orderFound = service.getOrder(userOrderId, userDate);
         boolean recalculate = false;
+        boolean hasError = false;
 
         // edit customer name
-        String newCustomerName = view.getUserCustomerNameChoiceEdit(orderFound);
-        if(!newCustomerName.isBlank()) {
-            orderFound.setCustomerName(newCustomerName);
-        }
+        do {
+            String newCustomerName = view.getUserCustomerNameChoiceEdit(orderFound);
+            if(!newCustomerName.isBlank()) {
+                try {
+                    service.validateCustomerName(orderFound, newCustomerName);
+                    hasError = false;
+                } catch (InvalidOrderInformationException e) {
+                    view.displayErrorMessage(e.getMessage());
+                    hasError = true;
+                }
+            } else {
+                break;
+            }
 
-        // edit state
-        String newState = view.getUserStateNameChoiceEdit(orderFound);
-        if(!newState.isBlank()) {
-            orderFound.setState(newState);
-            recalculate = true;
-        }
+        } while(hasError);
+
+        // reset to false in case user enter invalid input, then decide to change nothing by pressing enter
+        hasError = false;
+
+        do {
+            // edit state
+            String newState = view.getUserStateNameChoiceEdit(orderFound);
+            if(!newState.isBlank()) {
+                try {
+                    service.validateState(orderFound, newState);
+                    recalculate = true;
+                    hasError = false;
+                } catch (InvalidTaxInformationException e) {
+                    view.displayErrorMessage(e.getMessage());
+                    hasError = true;
+                }
+            }
+        } while(hasError);
+
+        // reset to false in case user enter invalid input, then decide to change nothing by pressing enter
+        hasError = false;
 
         // edit product type
         List<Product> productsList = service.getAllProduct();
         String productOptionFromUser = view.getUserProductTypeByNumberChoiceEdit(orderFound, productsList);
         if(!productOptionFromUser.isBlank()) {
             int productIndex = Integer.parseInt(productOptionFromUser) - 1;
-            orderFound.setProductType(productsList.get(productIndex).getProductType());
+            Product productSelected = productsList.get(productIndex);
+            orderFound.setProductType(productSelected.getProductType());
+            orderFound.setCostPerSquareFoot(productSelected.getCostPerSquareFoot());
+            orderFound.setLaborCostPerSquareFoot(productSelected.getLaborCostPerSquareFoot());
             recalculate = true;
         }
 
-        // edit area size
-        String area = view.getUserAreaChoiceEdit(orderFound);
-        if(!area.isBlank()) {
-            orderFound.setArea(new BigDecimal(area).setScale(2, RoundingMode.HALF_UP));
-            recalculate = true;
+        do {
+            // edit area size
+            String area = view.getUserAreaChoiceEdit(orderFound);
+            if(!area.isBlank()) {
+                try {
+                    service.validateArea(orderFound, area);
+                    recalculate = true;
+                    hasError = false;
+                } catch (InvalidOrderInformationException e) {
+                    view.displayErrorMessage(e.getMessage());
+                    hasError = true;
+                }
+            }
+        } while(hasError);
+
+
+        if(recalculate) {
+            service.calculateOrderCost(orderFound);
         }
 
-        if(service.validateOrderInfo(orderFound)) {
-            if(recalculate) {
-                service.calculateOrderCost(orderFound);
-            }
-            if(view.getUserConfirmation(orderFound, "Would you like to confirm and save the order? (Y/N)")) {
-                service.editOrder(userDate, orderFound);
-            }
+        if(view.getUserConfirmation(orderFound, "Would you like to confirm and save the order? (Y/N)")) {
+            service.editOrder(userDate, orderFound);
         }
-
 
     }
 

@@ -35,18 +35,6 @@ public interface FlooringService {
     Order editOrder(LocalDate date, Order order) throws DataPersistanceException;
 
     /**
-     * Validate all business logic on the given Order object.
-     *
-     * @param order of the order to remove
-     * @return true if order has a valid area, state, customer name and product
-     * false otherwise
-     * @throws InvalidOrderInformationException
-     * @throws DataPersistanceException
-     * @throws InvalidTaxInformationException
-     */
-    boolean validateOrderInfo(Order order) throws InvalidOrderInformationException, DataPersistanceException, InvalidTaxInformationException;
-
-    /**
      * Remove an Order associated with the given id and date.
      *
      * @param orderId of the order to remove
@@ -115,4 +103,33 @@ public interface FlooringService {
     void exportAll() throws DataPersistanceException;
 
 
+    /**
+     * Validate customerName business logic.
+     *
+     * @param order of the order to edited
+     * @param newCustomerName to be validated
+     * @throws InvalidOrderInformationException
+     */
+    void validateCustomerName(Order order, String newCustomerName) throws InvalidOrderInformationException;
+
+    /**
+     * Validate newState business logic.
+     *
+     * @param order of the order to edited
+     * @param newState to be validated
+     * @throws InvalidOrderInformationException
+     * @throws DataPersistanceException
+     */
+    void validateState(Order order, String newState) throws InvalidTaxInformationException, DataPersistanceException;
+
+    /**
+     * Validate area business logic.
+     *
+     * @param order of the order to edited
+     * @param area to be validated
+     * @throws InvalidOrderInformationException
+     */
+    void validateArea(Order order, String area) throws InvalidOrderInformationException;
+
+    void validateDate(LocalDate dateFromUser) throws InvalidOrderInformationException;
 }

@@ -42,51 +42,6 @@ public class FlooringServiceImpl implements FlooringService {
     }
 
     @Override
-    public boolean validateOrderInfo(Order order) throws InvalidOrderInformationException, DataPersistanceException, InvalidTaxInformationException {
-
-        // Date must be in the future
-        if(order.getDate().compareTo(LocalDate.now()) < 1) {
-            throw new InvalidOrderInformationException("ERROR: Date must be in the future.");
-        }
-
-        // CustomerName may not be blank
-        String customerName = order.getCustomerName();
-        if(customerName == null || customerName.isBlank()) {
-            throw new InvalidOrderInformationException("ERROR: Customer cannot be blank.");
-        }
-
-        // CustomerName limited to [a-z][0-9] and periods and comma characters and spaces between
-        String regex = "^[a-zA-Z0-9,.]+(\\s+[a-zA-Z0-9,.]+)*$";
-        if(!customerName.matches(regex)) {
-            throw new InvalidOrderInformationException("ERROR: Customer is limited to [a-z][0-9] and periods and comma characters.");
-        }
-
-        // State must exist
-        Tax tax = taxDao.getTaxByNameAbbrev(order.getState());
-        if(tax == null) {
-            throw new InvalidTaxInformationException("ERROR: State doesn't exist.");
-        }
-        order.setTaxRate(tax.getTaxRate());
-
-        // setup new Order missing product attribute
-        Product product = productDao.getProductByType(order.getProductType());
-        order.setLaborCostPerSquareFoot(product.getLaborCostPerSquareFoot());
-        order.setCostPerSquareFoot(product.getCostPerSquareFoot());
-
-        // area size must be positive
-        if(order.getArea().compareTo(BigDecimal.ZERO) < 1) {
-            throw new InvalidOrderInformationException("ERROR: Area must be a positive value.");
-        }
-
-        // area size must be equal or above 100
-        if(order.getArea().compareTo(AREA_MIN_SIZE) < 0) {
-            throw new InvalidOrderInformationException("ERROR: Area must have a minimum size of 100.");
-        }
-
-        return true;
-    }
-
-    @Override
     public Order removeOrder(int orderId, LocalDate date) throws DataPersistanceException {
         return orderDao.removeOrder(orderId, date);
     }
@@ -151,4 +106,53 @@ public class FlooringServiceImpl implements FlooringService {
         orderDao.exportAll();
     }
 
+    @Override
+    public void validateCustomerName(Order order, String newCustomerName) throws InvalidOrderInformationException {
+        // CustomerName may not be blank
+        if(newCustomerName == null || newCustomerName.isBlank()) {
+            throw new InvalidOrderInformationException("ERROR: Customer cannot be blank.");
+        }
+
+        // CustomerName limited to [a-z][0-9] and periods and comma characters and spaces between
+        String regex = "^[a-zA-Z0-9,.]+(\\s+[a-zA-Z0-9,.]+)*$";
+        if(!newCustomerName.matches(regex)) {
+            throw new InvalidOrderInformationException("ERROR: Customer is limited to [a-z][0-9] and periods and comma characters.");
+        }
+        order.setCustomerName(newCustomerName);
+    }
+
+    @Override
+    public void validateState(Order order, String newState) throws InvalidTaxInformationException, DataPersistanceException {
+        // State must exist
+        Tax tax = taxDao.getTaxByNameAbbrev(newState);
+        if(tax == null) {
+            throw new InvalidTaxInformationException("ERROR: State doesn't exist.");
+        }
+        order.setState(tax.getStateAbbreviation());
+        order.setTaxRate(tax.getTaxRate());
+    }
+
+    @Override
+    public void validateArea(Order order, String area) throws InvalidOrderInformationException {
+        // area size must be positive
+        BigDecimal areaBigDecimal = new BigDecimal(area).setScale(2, RoundingMode.HALF_UP);
+
+        if(areaBigDecimal.compareTo(BigDecimal.ZERO) < 1) {
+            throw new InvalidOrderInformationException("ERROR: Area must be a positive value.");
+        }
+
+        // area size must be equal or above 100
+        if(areaBigDecimal.compareTo(AREA_MIN_SIZE) < 0) {
+            throw new InvalidOrderInformationException("ERROR: Area must have a minimum size of 100.");
+        }
+        order.setArea(areaBigDecimal);
+    }
+
+    @Override
+    public void validateDate(LocalDate dateFromUser) throws InvalidOrderInformationException {
+        // Date must be in the future
+        if(dateFromUser.compareTo(LocalDate.now()) < 1) {
+            throw new InvalidOrderInformationException("ERROR: Date must be in the future.");
+        }
+    }
 }

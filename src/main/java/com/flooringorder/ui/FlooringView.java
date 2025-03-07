@@ -94,7 +94,6 @@ public class FlooringView {
     }
 
     public void displayErrorMessage(String errorMsg) {
-        io.print("=== ERROR ===");
         io.print(errorMsg);
     }
 
